@@ -17,9 +17,16 @@ service<http:Service> employeeMigrationService bind TranslateListener {
     }
 
     getEmployee (endpoint caller, http:Request translateRequest, string employeeId) {
-        http:Response jsonResponse = new;
-        jsonResponse.setJsonPayload(translateEmployee(employeeId));
-        _ = caller->respond(jsonResponse);
+        http:Response callerResponse = new;
+        json responseJson = translateEmployee(employeeId);
+
+        if(responseJson != null){
+            callerResponse.setJsonPayload(responseJson);
+        } else {
+            callerResponse.statusCode = 404;
+        }
+
+        _ = caller->respond(callerResponse);
     }
 
     @http:ResourceConfig {
@@ -28,8 +35,15 @@ service<http:Service> employeeMigrationService bind TranslateListener {
     }
 
     getDepartment (endpoint caller, http:Request translateRequest, string departmentId) {
-        http:Response jsonResponse = new;
-        jsonResponse.setJsonPayload(translateDepartment(departmentId));
-        _ = caller->respond(jsonResponse);
+        http:Response callerResponse = new;
+        json responseJson = translateDepartment(departmentId);
+
+        if(responseJson != null){
+            callerResponse.setJsonPayload(responseJson);
+        } else {
+            callerResponse.statusCode = 404;
+        }
+
+        _ = caller->respond(callerResponse);
     }
 }

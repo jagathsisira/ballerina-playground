@@ -13,7 +13,7 @@ public function translateEmployee(string employeeId) returns (json){
         response = getGenericJsonResponse("employee", employeeId, newEmployeeId);
     } catch (error err){
         io:println("Error occured in Employee Translation : " + err.message);
-        response = getRecordNotFoundResponse("employee", employeeId);
+        response = null;
     }
 
     return response;
@@ -28,7 +28,7 @@ public function translateDepartment(string departmentId) returns (json){
         response = getGenericJsonResponse("department", departmentId, newDepartmentId);
     } catch (error err){
         io:println("Error occured in Department Translation : " + err.message);
-        response = getRecordNotFoundResponse("department", departmentId);
+        response = null;
     }
 
     return response;
@@ -48,6 +48,7 @@ function getRecordNotFoundResponse(string informationType, string oldId) returns
     jsonObj.translateResponse = {};
     jsonObj.translateResponse.informationType =  informationType;
     jsonObj.translateResponse.sourceId =  oldId;
-    jsonObj.translateResponse.error =  "Record Not Found";
+    jsonObj.translateResponse.targetId =  "";
+    jsonObj.translateResponse.error =  true;
     return jsonObj;
 }
