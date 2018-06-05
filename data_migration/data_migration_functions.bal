@@ -9,7 +9,7 @@ map<string> departmentMap = { "FIN": "Finance", "ADMIN": "Administration", "IT":
 public function migrateEmployee(string employeeId) returns (json){
     json response;
 
-    if(employeeMap.hasKey(employeeId)){
+    if (employeeMap.hasKey(employeeId)){
         string newEmployeeId = employeeMap[employeeId];
         log:printDebug("Employee ID migration : " + employeeId + " to " + newEmployeeId);
         response = getGenericJsonResponse(employeeElement, employeeId, newEmployeeId);
@@ -24,7 +24,7 @@ public function migrateEmployee(string employeeId) returns (json){
 public function migrateDepartment(string departmentId) returns (json){
     json response;
 
-    if(departmentMap.hasKey(departmentId)){
+    if (departmentMap.hasKey(departmentId)){
         string newDepartmentId = departmentMap[departmentId];
         log:printDebug("Department ID migration : " + departmentId + " to " + newDepartmentId);
         response = getGenericJsonResponse(departmentElement, departmentId, newDepartmentId);
