@@ -2,7 +2,7 @@ import ballerina/io;
 import ballerina/http;
 import ballerina/log;
 
-endpoint http:Listener TranslateListener {
+endpoint http:Listener DataMigrationListener {
     port:9022
 };
 
@@ -10,15 +10,15 @@ endpoint http:Listener TranslateListener {
     basePath: "/data-migration"
 }
 
-service<http:Service> employeeMigrationService bind TranslateListener {
+service<http:Service> dataMigrationService bind DataMigrationListener {
+
     @http:ResourceConfig {
         methods: ["GET"],
         path: "/employee/{employeeId}"
     }
-
-    getEmployee (endpoint caller, http:Request translateRequest, string employeeId) {
+    migrateEmployee (endpoint caller, http:Request migrationRequest, string employeeId) {
         http:Response callerResponse = new;
-        json responseJson = translateEmployee(employeeId);
+        json responseJson = migrateEmployee(employeeId);
 
         if(responseJson != null){
             callerResponse.setJsonPayload(responseJson);
@@ -26,17 +26,18 @@ service<http:Service> employeeMigrationService bind TranslateListener {
             callerResponse.statusCode = 404;
         }
 
-        _ = caller->respond(callerResponse);
+        caller->respond(callerResponse)  but {
+            error e => log:printError("Error sending response back ", err = e)
+        };
     }
 
     @http:ResourceConfig {
         methods: ["GET"],
         path: "/department/{departmentId}"
     }
-
-    getDepartment (endpoint caller, http:Request translateRequest, string departmentId) {
+    migrateDepartment (endpoint caller, http:Request migrationRequest, string departmentId) {
         http:Response callerResponse = new;
-        json responseJson = translateDepartment(departmentId);
+        json responseJson = migrateDepartment(departmentId);
 
         if(responseJson != null){
             callerResponse.setJsonPayload(responseJson);
@@ -44,6 +45,8 @@ service<http:Service> employeeMigrationService bind TranslateListener {
             callerResponse.statusCode = 404;
         }
 
-        _ = caller->respond(callerResponse);
+        caller->respond(callerResponse) but {
+            error e => log:printError("Error sending response back ", err = e)
+        };
     }
 }
