@@ -16,9 +16,9 @@ service<http:Service> dataMigrationService bind DataMigrationListener {
         methods: ["GET"],
         path: "/employee/{employeeId}"
     }
-    migrateEmployee (endpoint caller, http:Request migrationRequest, string employeeId) {
+    migrateEmployee(endpoint caller, http:Request migrationRequest, string employeeId) {
         http:Response callerResponse = new;
-        json responseJson = migrateEmployee(employeeId);
+        json responseJson = getNewEmployeeInfo(employeeId);
 
         if(responseJson != null){
             callerResponse.setJsonPayload(responseJson);
@@ -35,9 +35,9 @@ service<http:Service> dataMigrationService bind DataMigrationListener {
         methods: ["GET"],
         path: "/department/{departmentId}"
     }
-    migrateDepartment (endpoint caller, http:Request migrationRequest, string departmentId) {
+    migrateDepartment(endpoint caller, http:Request migrationRequest, string departmentId) {
         http:Response callerResponse = new;
-        json responseJson = migrateDepartment(departmentId);
+        json responseJson = getNewDepartmentInfo(departmentId);
 
         if(responseJson != null){
             callerResponse.setJsonPayload(responseJson);

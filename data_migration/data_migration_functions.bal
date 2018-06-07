@@ -6,7 +6,7 @@ string departmentElement = "department";
 map<string> employeeMap = { "001": "ABA001", "002": "AXD604", "121": "GRT432", "201": "LDM043" };
 map<string> departmentMap = { "FIN": "Finance", "ADMIN": "Administration", "IT": "IT", "Infrastructure": "DevOps" };
 
-public function migrateEmployee(string employeeId) returns (json){
+public function getNewEmployeeInfo(string employeeId) returns (json){
     json response;
 
     if(employeeMap.hasKey(employeeId)){
@@ -21,7 +21,7 @@ public function migrateEmployee(string employeeId) returns (json){
     return response;
 }
 
-public function migrateDepartment(string departmentId) returns (json){
+public function getNewDepartmentInfo(string departmentId) returns (json){
     json response;
 
     if(departmentMap.hasKey(departmentId)){
