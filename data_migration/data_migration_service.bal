@@ -9,7 +9,6 @@ endpoint http:Listener DataMigrationListener {
 @http:ServiceConfig {
     basePath: "/data-migration"
 }
-
 service<http:Service> dataMigrationService bind DataMigrationListener {
 
     @http:ResourceConfig {
