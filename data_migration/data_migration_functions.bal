@@ -1,4 +1,3 @@
-import ballerina/io;
 import ballerina/log;
 
 string employeeElement = "employee";
@@ -9,6 +8,7 @@ map<string> departmentMap = { "FIN": "Finance", "ADMIN": "Administration", "IT":
 public function getNewEmployeeInfo(string employeeId) returns (json){
     json response;
 
+    //Transform Employee ID. If mapping not found, set it to null.
     if (employeeMap.hasKey(employeeId)){
         string newEmployeeId = employeeMap[employeeId];
         log:printDebug("Employee ID migration : " + employeeId + " to " + newEmployeeId);
@@ -24,6 +24,7 @@ public function getNewEmployeeInfo(string employeeId) returns (json){
 public function getNewDepartmentInfo(string departmentId) returns (json){
     json response;
 
+    //Transform Department ID. If mapping not found, set it to null.
     if (departmentMap.hasKey(departmentId)){
         string newDepartmentId = departmentMap[departmentId];
         log:printDebug("Department ID migration : " + departmentId + " to " + newDepartmentId);

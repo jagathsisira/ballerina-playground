@@ -1,4 +1,3 @@
-import ballerina/io;
 import ballerina/http;
 import ballerina/log;
 
@@ -17,8 +16,11 @@ service<http:Service> dataMigrationService bind DataMigrationListener {
     }
     migrateEmployee(endpoint caller, http:Request migrationRequest, string employeeId) {
         http:Response callerResponse = new;
+
+        //Get new Employee ID from Data Migration Service
         json responseJson = getNewEmployeeInfo(employeeId);
 
+        //If the response is not null, it is a successfull response, error otherwise
         if(responseJson != null){
             callerResponse.setJsonPayload(responseJson);
         } else {
@@ -36,8 +38,11 @@ service<http:Service> dataMigrationService bind DataMigrationListener {
     }
     migrateDepartment(endpoint caller, http:Request migrationRequest, string departmentId) {
         http:Response callerResponse = new;
+
+        //Get new Department ID from Data Migration Service
         json responseJson = getNewDepartmentInfo(departmentId);
 
+        //If the response is not null, it is a successfull response, error otherwise
         if(responseJson != null){
             callerResponse.setJsonPayload(responseJson);
         } else {

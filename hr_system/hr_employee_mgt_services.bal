@@ -1,15 +1,19 @@
-import ballerina/io;
 import ballerina/http;
 import ballerina/log;
 
-type EmployeeRecord {
+type InputData {
+    Employee employee;
+    int recordId;
+    string createdDate;
+    string lastUpdated;
+};
+
+type Employee {
     string name;
     int age;
     string city;
     string employeeId;
     string departmentId;
-    string createdDate;
-    string lastUpdated;
 };
 
 endpoint http:Listener EmployeeMgtServiceListener {
@@ -26,26 +30,30 @@ service<http:Service> hrEmployeeManagementService bind EmployeeMgtServiceListene
         path: "/employee"
     }
     addEmployee(endpoint caller, http:Request addEmployeeReq) {
+        InputData inputData;
+        Employee employee;
         http:Response addEmployeeResponse = new;
-        EmployeeRecord employeeRecord;
         json responseJson = {};
+
+        //Extract Employee Information from the JSON request
         var payloadJson = check addEmployeeReq.getJsonPayload();
-        employeeRecord = check <EmployeeRecord >payloadJson;
+        inputData = check <InputData>payloadJson;
+        employee = inputData.employee;
 
         log:printDebug("Employee details received : " + payloadJson.toString());
 
-        if(employeeRecord.name != null && employeeRecord.age > 0 && employeeRecord.city != null) {
+        //Validate information, if validation failed, send HTTP 400 response
+        if(employee != null && employee.name != null && employee.age > 0 && employee.city != null) {
             log:printDebug("Employee data validation successful ");
-            responseJson.result = "success";
-            responseJson.employeeId = employeeRecord.employeeId;
+            responseJson.status = "Success";
+            responseJson.employeeId = employee.employeeId;
             responseJson.message = "Employee information successfull added to the system";
 
             addEmployeeResponse.setJsonPayload(responseJson);
             addEmployeeResponse.statusCode = 200;
         } else {
             log:printError("Employee data validation error occured");
-            responseJson.result = "error";
-            responseJson.employeeId = employeeRecord.employeeId;
+            responseJson.status = "Error";
             responseJson.message = "Incomplete information in Employee Details";
 
             addEmployeeResponse.setJsonPayload(responseJson);
