@@ -12,7 +12,7 @@ service<http:Service> dataMigrationService bind DataMigrationListener {
 
     @http:ResourceConfig {
         methods: ["GET"],
-        path: "/employee/{employeeId}"
+        path: "/employees/{employeeId}"
     }
     migrateEmployee(endpoint caller, http:Request migrationRequest, string employeeId) {
         http:Response callerResponse = new;
@@ -34,7 +34,7 @@ service<http:Service> dataMigrationService bind DataMigrationListener {
 
     @http:ResourceConfig {
         methods: ["GET"],
-        path: "/department/{departmentId}"
+        path: "/departments/{departmentId}"
     }
     migrateDepartment(endpoint caller, http:Request migrationRequest, string departmentId) {
         http:Response callerResponse = new;

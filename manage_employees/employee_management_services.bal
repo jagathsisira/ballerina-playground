@@ -18,7 +18,7 @@ endpoint http:Listener EmployeeMgtServiceListener {
 
 //Endpoint for HR system
 endpoint http:Client hrEP {
-    url: "http://localhost:9023/hr/employee-mgt"
+    url: "http://localhost:9023/hr"
 };
 
 //Endpoint for Data Migration Services
@@ -33,21 +33,16 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
 
     @http:ResourceConfig {
         methods: ["POST"],
-        path: "/employee"
+        path: "/employees"
     }
     addEmployee(endpoint caller, http:Request addEmployeeRequest) {
-        EmployeeInfo employeeInfo;
         http:Request hrSystemRequest = new;
         json requestJson = {};
-        string employeeId;
         string newEmployeeId;
-        string departmentId;
         string newDepartmentId;
 
         //Process request JSON payload and validate
-        var payloadJson = addEmployeeRequest.getJsonPayload();
-
-        match payloadJson {
+        match (addEmployeeRequest.getJsonPayload()) {
             json inputPayload => {
                 requestJson = inputPayload;
             }
@@ -62,12 +57,12 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
         log:printDebug("Employee information received : " + requestJson.toString());
 
         //Extract values from received payload
-        employeeInfo = check <EmployeeInfo>requestJson;
-        employeeId = employeeInfo.employee_id;
-        departmentId = employeeInfo.department_id;
+        EmployeeInfo employeeInfo = check <EmployeeInfo>requestJson;
+        string employeeId = employeeInfo.employee_id;
+        string departmentId = employeeInfo.department_id;
 
         //Employee Migration Service Invocation
-        var employeeMigrationResponse = dataMigrationEP->get("/employee/" + untaint employeeId);
+        var employeeMigrationResponse = dataMigrationEP->get("/employees/" + untaint employeeId);
 
         //Process the response
         match employeeMigrationResponse {
@@ -78,9 +73,15 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
                     json employeeMigrationPayload = check res.getJsonPayload();
                     newEmployeeId = employeeMigrationPayload.translateResponse.targetId.toString();
                     log:printDebug("Employee ID Migration : Old - " + employeeId + " Migrated - " + newEmployeeId);
+                } else if(res.statusCode == 404) {
+                    caller->respond(getHttpResponse(500, "Error occured while processing the request - No matching "
+                                + "Employee ID found")) but { error e =>
+                        log:printError("Error sending response ", err = e)
+                    };
+                    done;
                 } else {
-                    caller->respond(getHttpResponse(404, "Error occured while migrating Employee ID - No matching ID found")) but { error e =>
-                        log:printError("Error sending response", err = e)
+                    caller->respond(getHttpResponse(500, "Error occured while processing the request")) but { error e =>
+                        log:printError("Error sending response ", err = e)
                     };
                     done;
                 }
@@ -95,7 +96,7 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
         }
 
         //Department Migration Service Invocation
-        var departmentMigrationResponse = dataMigrationEP->get("/department/" + untaint departmentId);
+        var departmentMigrationResponse = dataMigrationEP->get("/departments/" + untaint departmentId);
 
         //Process the response
         match departmentMigrationResponse {
@@ -106,9 +107,15 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
                     json departmentMigrationPayload = check res.getJsonPayload();
                     newDepartmentId = departmentMigrationPayload.translateResponse.targetId.toString();
                     log:printDebug("Department ID Migration : Old - " + departmentId + " Migrated - " + newDepartmentId);
+                } else if(res.statusCode == 404) {
+                    caller->respond(getHttpResponse(500, "Error occured while processing the request - No matching "
+                                + "Department ID found")) but { error e =>
+                        log:printError("Error sending response ", err = e)
+                    };
+                    done;
                 } else {
-                    caller->respond(getHttpResponse(404, "Error occured while migrating Department ID - No matching ID found")) but { error e =>
-                        log:printError("Error sending response", err = e)
+                    caller->respond(getHttpResponse(500, "Error occured while processing the request")) but { error e =>
+                    log:printError("Error sending response ", err = e)
                     };
                     done;
                 }
@@ -127,7 +134,7 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
         hrSystemRequest.setJsonPayload(getHrSystemRequestPayload(employeeInfo, newEmployeeId, newDepartmentId));
 
         //HR System Back-end Service Invocation
-        var hrSystemResponse = hrEP->execute("POST", "/employee", hrSystemRequest);
+        var hrSystemResponse = hrEP->execute("POST", "/employees", hrSystemRequest);
 
         //Process the response
         match hrSystemResponse {
@@ -141,7 +148,6 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
             error err => {
                 caller->respond(getHttpResponse(500, err.message)) but { error e =>
                     log:printError("Error sending response", err = e) };
-                done;
             }
         }
     }

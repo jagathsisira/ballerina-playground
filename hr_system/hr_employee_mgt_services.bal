@@ -21,13 +21,13 @@ endpoint http:Listener EmployeeMgtServiceListener {
 };
 
 @http:ServiceConfig {
-    basePath: "/hr/employee-mgt"
+    basePath: "/hr"
 }
 service<http:Service> hrEmployeeManagementService bind EmployeeMgtServiceListener {
 
     @http:ResourceConfig {
         methods: ["POST"],
-        path: "/employee"
+        path: "/employees"
     }
     addEmployee(endpoint caller, http:Request addEmployeeReq) {
         InputData inputData;
