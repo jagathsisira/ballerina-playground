@@ -74,13 +74,13 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
                     newEmployeeId = employeeMigrationPayload.translateResponse.targetId.toString();
                     log:printDebug("Employee ID Migration : Old - " + employeeId + " Migrated - " + newEmployeeId);
                 } else if(res.statusCode == 404) {
-                    caller->respond(getHttpResponse(500, "Error occured while processing the request - No matching "
+                    caller->respond(getHttpResponse(500, "Error occurred while processing the request - No matching "
                                 + "Employee ID found")) but { error e =>
                         log:printError("Error sending response ", err = e)
                     };
                     done;
                 } else {
-                    caller->respond(getHttpResponse(500, "Error occured while processing the request")) but { error e =>
+                    caller->respond(getHttpResponse(500, "Error occurred while processing the request")) but { error e =>
                         log:printError("Error sending response ", err = e)
                     };
                     done;
@@ -108,13 +108,13 @@ service<http:Service> manageEmployee bind EmployeeMgtServiceListener {
                     newDepartmentId = departmentMigrationPayload.translateResponse.targetId.toString();
                     log:printDebug("Department ID Migration : Old - " + departmentId + " Migrated - " + newDepartmentId);
                 } else if(res.statusCode == 404) {
-                    caller->respond(getHttpResponse(500, "Error occured while processing the request - No matching "
+                    caller->respond(getHttpResponse(500, "Error occurred while processing the request - No matching "
                                 + "Department ID found")) but { error e =>
                         log:printError("Error sending response ", err = e)
                     };
                     done;
                 } else {
-                    caller->respond(getHttpResponse(500, "Error occured while processing the request")) but { error e =>
+                    caller->respond(getHttpResponse(500, "Error occurred while processing the request")) but { error e =>
                     log:printError("Error sending response ", err = e)
                     };
                     done;

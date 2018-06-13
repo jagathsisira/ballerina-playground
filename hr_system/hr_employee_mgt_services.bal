@@ -47,7 +47,7 @@ service<http:Service> hrEmployeeManagementService bind EmployeeMgtServiceListene
             log:printDebug("Employee data validation successful ");
             responseJson.status = "Success";
             responseJson.employeeId = employee.employeeId;
-            responseJson.message = "Employee information successfull added to the system";
+            responseJson.message = "Employee information successfully added to the system";
 
             addEmployeeResponse.setJsonPayload(responseJson);
             addEmployeeResponse.statusCode = 200;
